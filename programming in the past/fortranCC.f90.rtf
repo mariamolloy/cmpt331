@@ -9,24 +9,26 @@
 	implicit none\
 	\
 	INTEGER , PARAMETER :: shift = 7\
-	Character (len = 50) :: message = "HI IM MARIA XYZ"\
+	Character (len = 16) :: message = "HI IM MARIA XYZ"\
+	CHARACTER (LEN = 16) :: encoded = ""\
 \
 	print *, message\
 	call encrypt(message)\
+	call decode(encoded)\
 	\
-\
     \
 contains\
     \
 SUBROUTINE encrypt(phrase)\
-	CHARACTER (LEN = 50), intent(inout) :: phrase\
+	CHARACTER (LEN = 16), intent(inout) :: phrase\
 	CHARACTER (LEN = 1) :: currentChar\
 	CHARACTER (LEN = 1) :: newChar\
-	CHARACTER (LEN = 50) :: encoded\
+	CHARACTER (LEN = 16) :: temp\
 	INTEGER :: i\
 	INTEGER :: ascii\
 	INTEGER :: newAscii\
 	do i = 1, len(phrase)\
+		temp = encoded\
 		currentChar = phrase(i:i+1)\
 		ascii = iachar(currentChar)\
 		IF (ascii == 32) THEN\
@@ -35,11 +37,40 @@ SUBROUTINE encrypt(phrase)\
 			newAscii = (mod((ascii + shift - 65),26)) + 65\
 		END IF\
 		newChar = char(newAscii)\
-		print *, newAscii\
-		print *, newChar\
+!		print *, newAscii\
+!		print *, newChar\
+!		print *, temp\
+		encoded = trim(temp) // trim(newChar)\
 	end do\
 	print *, encoded\
 END SUBROUTINE encrypt\
-	\
+\
+SUBROUTINE decode(code)	\
+	CHARACTER (LEN = 16), intent(inout) :: code\
+	CHARACTER (LEN = 1) :: currentChar\
+	CHARACTER (LEN = 1) :: newChar\
+	CHARACTER (LEN = 16) :: decoded = ""\
+	CHARACTER (LEN = 16) :: temp\
+	INTEGER :: i\
+	INTEGER :: ascii\
+	INTEGER :: newAscii\
+	INTEGER :: newShift = 26 - shift\
+	DO i = 1, len(code)\
+		temp = decoded\
+		currentChar = code(i:i+1)\
+		ascii = iachar(currentChar)\
+		IF (ascii == 32) THEN\
+			newAscii = 32\
+		ELSE \
+			newAscii = (mod((ascii + newShift - 65),26)) + 65\
+		END IF\
+		newChar = char(newAscii)\
+!		print *, newAscii\
+!		print *, newChar\
+!		print *, temp\
+		decoded = trim(temp) // trim(newChar)\
+	END DO\
+	print *, decoded\
+END SUBROUTINE decode\
 \
 end program CC}
